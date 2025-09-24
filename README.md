@@ -5,16 +5,10 @@ https://codecraft-site.netlify.app/
 
 Key Features:
 
-quizzes for multiple programming languages
-
-Timed MCQ-based tests with instant results
-
-Digital certificates with unique IDs
-
-Community-driven blog for knowledge sharing
-
-Fully responsive design for web and mobile
+1.quizzes for multiple programming languages
+2.Timed MCQ-based tests with instant results
+3.Digital certificates with unique IDs
+4.Community-driven blog for knowledge sharing
+5.Fully responsive design for web and mobile
 
 Technology Stack: HTML5, CSS3, JavaScript, Bootstrap, jquery.
-
-Goal: To provide an accessible, engaging, and gamified platform for students, beginners, and developers to practice coding, validate skills, and build confidence in programming.
