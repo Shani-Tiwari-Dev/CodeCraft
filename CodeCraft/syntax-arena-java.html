@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeCraft - Java Syntax Arena</title>
+      <link rel="shortcut icon" href="assets/images/logo2.png">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent: #f72585;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4cc9f0;
+            --gray: #6c757d;
+            --border-radius: 10px;
+            --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            
+            /* Additional colors for Python theme */
+            --python-blue: #306998;
+            --python-yellow: #FFD43B;
+            --python-light: #E2E8F0;
+            --python-dark: #1E3A8A;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--python-light) 0%, #ffffff 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: hsl(228, 12%, 17%);
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: var(--box-shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .logo i {
+            color: var(--python-yellow);
+        }
+
+        .container {
+            display: flex;
+            flex: 1;
+        }
+
+        .sidebar {
+            width: 280px;
+         background-image: url("assets/images/footer-bg.jpg");
+            padding: 1.5rem;
+            box-shadow: var(--box-shadow);
+            overflow-y: auto;
+            color: white;
+        }
+
+        .sidebar h2 {
+            color: var(--python-yellow);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--python-yellow);
+        }
+
+        .module {
+            margin-bottom: 1.5rem;
+        }
+
+        .module-title {
+            font-weight: 600;
+            color: white;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 6px;
+            transition: background-color 0.3s;
+        }
+
+        .module-title:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .module-title i {
+            transition: transform 0.3s ease;
+        }
+
+        .topics {
+            list-style: none;
+            padding-left: 1rem;
+            display: none;
+        }
+
+        .topics.show {
+            display: block;
+        }
+
+        .topic {
+            padding: 0.6rem 0.8rem;
+            margin-bottom: 0.4rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--python-light);
+        }
+
+        .topic:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .topic.active {
+            background-color: var(--python-yellow);
+            color: var(--python-dark);
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+
+        .content-header {
+            margin-bottom: 2rem;
+        }
+
+        .content-header h1 {
+            color: var(--python-blue);
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-container {
+            background-color: #e9ecef;
+            border-radius: 10px;
+            height: 10px;
+            margin: 1rem 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--python-blue), var(--python-yellow));
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .content-body {
+            background: white;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 2rem;
+            min-height: 400px;
+        }
+
+        .content-body h2 {
+            color: var(--python-blue);
+            margin-bottom: 1.2rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .content-body h3 {
+            color: var(--python-dark);
+            margin: 1.5rem 0 0.8rem 0;
+        }
+
+        .content-body p {
+            margin-bottom: 1.2rem;
+        }
+
+        .content-body ul, .content-body ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .content-body li {
+            margin-bottom: 0.5rem;
+        }
+
+        .content-body code {
+            background-color: #f8f9fa;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+            color: var(--python-dark);
+        }
+
+        .content-body pre {
+            background-color: #2b2b2b;
+            color: #f8f8f2;
+            padding: 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            font-family: 'Courier New', Courier, monospace;
+            line-height: 1.5;
+        }
+
+        .content-body pre code {
+            background-color: transparent;
+            color: inherit;
+            padding: 0;
+        }
+
+        .content-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-prev {
+            background-color: white;
+            color: var(--python-blue);
+            border: 2px solid var(--python-blue);
+        }
+
+        .btn-prev:hover:not(:disabled) {
+            background-color: #e9ecef;
+        }
+
+        .btn-next {
+            background-color: var(--python-blue);
+            color: white;
+        }
+
+        .btn-next:hover:not(:disabled) {
+            background-color: var(--python-dark);
+        }
+
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--python-dark);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                order: 2;
+            }
+            
+            .main-content {
+                order: 1;
+            }
+            
+            .content-footer {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        .code-comment {
+            color: #6A9955;
+        }
+
+        .code-keyword {
+            color: #C586C0;
+        }
+
+        .code-string {
+            color: #CE9178;
+        }
+
+        .code-function {
+            color: #DCDCAA;
+        }
+
+        .code-parameter {
+            color: #9CDCFE;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="assets/images/logo2.png" alt="logo" height="100px;">
+            <span>Java Syntax Arena</span>
+        </div>
+        <div class="user-actions">
+            <img src="assets/images/Java1.png" alt="python" style="height: 100px;">
+        </div>
+    </header>
+
+    <div class="container">
+        <aside class="sidebar">
+            <h2>Java Topics</h2>
+            
+           <div class="module">
+    <div class="module-title">
+        <i class="fas fa-chevron-down"></i>
+        <span>Java Programming</span>
+    </div>
+    <ul class="topics">
+        <li class="topic" data-id="java-intro">Introduction to Java</li>
+        <li class="topic" data-id="java-syntax">Java Syntax & Structure</li>
+        <li class="topic" data-id="java-variables">Variables & Data Types</li>
+        <li class="topic" data-id="java-operators">Operators in Java</li>
+        <li class="topic" data-id="java-control">Control Flow</li>
+        <li class="topic" data-id="java-loops">Loops</li>
+        <li class="topic" data-id="java-arrays">Arrays</li>
+        <li class="topic" data-id="java-methods">Methods</li>
+        <li class="topic" data-id="java-oop">OOP Basics</li>
+        <li class="topic" data-id="java-inheritance">Inheritance & Polymorphism</li>
+        <li class="topic" data-id="java-exceptions">Exception Handling</li>
+        <li class="topic" data-id="java-io">Basic Input/Output</li>
+    </ul>
+</div>
+        </aside>
+
+        <main class="main-content">
+            <div class="content-header">
+                <h1>Introduction to Python</h1>
+                <p>Learn the fundamentals of Python programming</p>
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress" style="width: 5%;"></div>
+                </div>
+            </div>
+
+            <div class="content-body">
+                <h2>What is Python?</h2>
+                <p>Python is a high-level, interpreted programming language known for its clear syntax and readability. Created by Guido van Rossum and first released in 1991, Python's design philosophy emphasizes code readability with its notable use of significant whitespace.</p>
+                
+                <h2>Why Learn Python?</h2>
+                <ul>
+                    <li>Easy to learn and read - great for beginners</li>
+                    <li>Versatile - used in web development, data science, AI, and more</li>
+                    <li>Large standard library and active community</li>
+                    <li>Cross-platform compatibility</li>
+                    <li>High demand in the job market</li>
+                </ul>
+                
+                <h2>Your First Python Program</h2>
+                <p>Here's a simple "Hello, World!" program in Python:</p>
+                <pre><code><span class="code-keyword">print</span>(<span class="code-string">"Hello, World!"</span>)</code></pre>
+                
+                <p>Compare this to other languages, and you'll see why Python is known for its simplicity and readability.</p>
+            </div>
+
+            <div class="content-footer">
+                <button class="btn btn-prev" id="prevBtn" disabled>
+                    <i class="fas fa-arrow-left"></i> Previous
+                </button>
+                <button class="btn btn-next" id="nextBtn">
+                    Next <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <footer style="background-color: #2b2b2b;">
+        <p> Copyright &copy; 2025 <a href="index.html" style="text-decoration: none; color: yellow;">CodeCraft</a>. all rights reserved</p>
+    </footer>
+
+    <script>
+        // Topic data for all Python concepts
+        const topics = {
+'java-intro': {
+    title: 'Introduction to Java',
+    content: `<h2>What is Java?</h2>
+    <p>Java is a high-level, class-based, object-oriented programming language developed by James Gosling at Sun Microsystems in 1995. It is designed to be platform-independent, secure, and robust.</p>
+    <h3>Key Features</h3>
+    <ul>
+        <li><b>Platform Independent</b> – Runs on any OS using JVM (Java Virtual Machine).</li>
+        <li><b>Object-Oriented</b> – Organizes code into classes and objects.</li>
+        <li><b>Robust & Secure</b> – Strong memory management and exception handling.</li>
+        <li><b>Portable</b> – "Write once, run anywhere."</li>
+    </ul>
+    <h3>Example</h3>
+    <pre><code>public class Main {
+    public static void main(String[] args) {
+        System.out.println("Welcome to Java!");
+    }
+}</code></pre>
+    <h3>Notes</h3>
+    <ul>
+        <li>Java programs must be saved with the same name as the class (e.g., Main.java).</li>
+        <li>The <code>main()</code> method is always required to start execution.</li>
+    </ul>`
+},
+'java-syntax': {
+    title: 'Java Syntax & Structure',
+    content: `<h2>Basic Syntax</h2>
+    <p>Every Java program is built inside a class. The <code>main()</code> method is the entry point where execution starts.</p>
+    <h3>Rules</h3>
+    <ul>
+        <li>Each statement ends with <code>;</code>.</li>
+        <li>Curly braces <code>{}</code> define code blocks.</li>
+        <li>Java is case-sensitive.</li>
+    </ul>
+    <h3>Example</h3>
+    <pre><code>public class HelloWorld {
+    public static void main(String[] args) {
+        // Prints Hello World
+        System.out.println("Hello World");
+    }
+}</code></pre>
+    <h3>Notes</h3>
+    <ul>
+        <li>Comments are written using <code>//</code> (single-line) or <code>/* ... */</code> (multi-line).</li>
+        <li>Code indentation improves readability but is not required by the compiler.</li>
+    </ul>`
+},
+'java-variables': {
+    title: 'Variables & Data Types',
+    content: `<h2>Variables</h2>
+    <p>Variables are containers for storing data. Java requires explicit declaration of type.</p>
+    <h3>Primitive Types</h3>
+    <ul>
+        <li><code>int</code> – whole numbers</li>
+        <li><code>double</code> – decimals</li>
+        <li><code>char</code> – single character</li>
+        <li><code>boolean</code> – true/false</li>
+        <li><code>String</code> – text (actually an object)</li>
+    </ul>
+    <h3>Example</h3>
+    <pre><code>int age = 20;
+double salary = 45000.5;
+char grade = 'A';
+boolean isStudent = true;
+String name = "Alice";</code></pre>
+    <h3>Notes</h3>
+    <ul>
+        <li>Variable names cannot start with numbers or special characters.</li>
+        <li>Use meaningful variable names for better readability (e.g., <code>studentAge</code>).</li>
+    </ul>`
+},
+'java-operators': {
+    title: 'Operators in Java',
+    content: `<h2>Common Operators</h2>
+    <ul>
+        <li><code>+</code> – Addition</li>
+        <li><code>-</code> – Subtraction</li>
+        <li><code>*</code> – Multiplication</li>
+        <li><code>/</code> – Division</li>
+        <li><code>%</code> – Modulus (remainder)</li>
+    </ul>
+    <h3>Other Types</h3>
+    <ul>
+        <li><b>Relational</b>: <code>== != > < >= <=</code></li>
+        <li><b>Logical</b>: <code>&& || !</code></li>
+        <li><b>Assignment</b>: <code>= += -=</code></li>
+        <li><b>Unary</b>: <code>++ --</code></li>
+    </ul>
+    <h3>Example</h3>
+    <pre><code>int a = 10, b = 5;
+System.out.println(a + b); // 15
+System.out.println(a > b); // true
+System.out.println((a > 5) && (b < 10)); // true</code></pre>
+    <h3>Notes</h3>
+    <ul>
+        <li><code>==</code> is used for comparison, not <code>=</code>.</li>
+        <li>Be careful with division of integers (10/3 = 3, not 3.33).</li>
+    </ul>`
+},
+'java-control': {
+    title: 'Control Flow',
+    content: `<h2>If-Else Example</h2>
+    <pre><code>int age = 18;
+if(age >= 18){
+    System.out.println("Eligible to vote");
+}else{
+    System.out.println("Not eligible");
+}</code></pre>
+    <h2>Switch Example</h2>
+    <pre><code>int day = 3;
+switch(day){
+    case 1: System.out.println("Monday"); break;
+    case 2: System.out.println("Tuesday"); break;
+    case 3: System.out.println("Wednesday"); break;
+    default: System.out.println("Invalid day");
+}</code></pre>
+    <h3>Notes</h3>
+    <ul>
+        <li>Always include a <code>default</code> case in switch for safety.</li>
+        <li>Use <code>if-else</code> for range checks, and <code>switch</code> for multiple fixed options.</li>
+    </ul>`
+},
+'java-loops': {
+    title: 'Loops in Java',
+    content: `<h2>For Loop Example</h2>
+    <pre><code>for(int i=1; i<=5; i++){
+    System.out.println("Count: " + i);
+}</code></pre>
+    <h2>While Loop</h2>
+    <pre><code>int i = 1;
+while(i <= 5){
+    System.out.println(i);
+    i++;
+}</code></pre>
+    <h2>Do-While Loop</h2>
+    <pre><code>int j = 1;
+do{
+    System.out.println(j);
+    j++;
+}while(j <= 5);</code></pre>
+    <h3>Notes</h3>
+    <ul>
+        <li>Use <code>for</code> when the number of iterations is known.</li>
+        <li>Use <code>while</code> or <code>do-while</code> when condition-based repetition is needed.</li>
+        <li><code>do-while</code> always runs at least once.</li>
+    </ul>`
+},
+'java-arrays': {
+    title: 'Arrays in Java',
+    content: `<h2>Array Example</h2>
+    <p>Arrays store multiple values of the same type in a single variable.</p>
+    <pre><code>int[] numbers = {10, 20, 30, 40, 50};
+System.out.println(numbers[0]); // 10
+for(int i=0; i<numbers.length; i++){
+    System.out.println(numbers[i]);
+}</code></pre>
+    <h3>Notes</h3>
+    <ul>
+        <li>Array indexes start at 0, not 1.</li>
+        <li>Once defined, array size cannot change (use ArrayList for dynamic size).</li>
+    </ul>`
+},
+'java-methods': {
+    title: 'Methods in Java',
+    content: `<h2>Defining a Method</h2>
+    <p>Methods are reusable blocks of code. They may take parameters and return values.</p>
+    <pre><code>public static int add(int a, int b){
+    return a + b;
+}
+public static void main(String[] args){
+    int result = add(5, 7);
+    System.out.println("Sum = " + result);
+}</code></pre>
+    <h3>Notes</h3>
+    <ul>
+        <li>Methods improve code reusability.</li>
+        <li><code>static</code> methods can be called without creating an object.</li>
+    </ul>`
+},
+'java-oop': {
+    title: 'Object-Oriented Programming',
+    content: `<h2>Classes & Objects</h2>
+    <p>Java uses classes (blueprints) and objects (instances) to organize code.</p>
+    <pre><code>class Car {
+    String brand = "Toyota";
+    void drive(){
+        System.out.println("Car is driving...");
+    }
+}
+public class Main {
+    public static void main(String[] args) {
+        Car myCar = new Car();
+        System.out.println(myCar.brand);
+        myCar.drive();
+    }
+}</code></pre>
+    <h3>Notes</h3>
+    <ul>
+        <li>One class can create multiple objects.</li>
+        <li>Use <code>this</code> keyword to refer to current object’s variables.</li>
+    </ul>`
+},
+'java-inheritance': {
+    title: 'Inheritance & Polymorphism',
+    content: `<h2>Inheritance Example</h2>
+    <p>A subclass can inherit fields and methods from a parent class using <code>extends</code>.</p>
+    <pre><code>class Animal {
+    void sound(){ System.out.println("Animal makes a sound"); }
+}
+class Dog extends Animal {
+    void sound(){ System.out.println("Dog barks"); }
+}
+public class Main {
+    public static void main(String[] args) {
+        Dog d = new Dog();
+        d.sound(); // Dog barks
+    }
+}</code></pre>
+    <h3>Notes</h3>
+    <ul>
+        <li>Inheritance promotes code reuse.</li>
+        <li>Polymorphism allows overriding methods for different behaviors.</li>
+    </ul>`
+},
+'java-exceptions': {
+    title: 'Exception Handling',
+    content: `<h2>Try-Catch Example</h2>
+    <p>Exceptions are runtime errors. Java handles them using try-catch blocks.</p>
+    <pre><code>try {
+    int result = 10 / 0; // Error
+} catch (ArithmeticException e) {
+    System.out.println("Cannot divide by zero!");
+}</code></pre>
+    <h3>Notes</h3>
+    <ul>
+        <li>Always catch specific exceptions instead of generic <code>Exception</code>.</li>
+        <li>Use <code>finally</code> for cleanup code (like closing files).</li>
+    </ul>`
+},
+'java-io': {
+    title: 'Basic Input/Output',
+    content: `<h2>Reading Input</h2>
+    <p>Use Scanner class for user input.</p>
+    <pre><code>import java.util.Scanner;
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Enter name: ");
+        String name = sc.nextLine();
+        System.out.println("Hello, " + name);
+    }
+}</code></pre>
+    <h3>Notes</h3>
+    <ul>
+        <li><code>System.out.println()</code> prints with a newline, <code>print()</code> does not.</li>
+        <li>Always close the Scanner object after use (<code>sc.close()</code>).</li>
+    </ul>`
+}
+}
+            // Additional topics would continue here in a real implementation
+
+        // DOM elements
+        const topicElements = document.querySelectorAll('.topic');
+        const moduleTitles = document.querySelectorAll('.module-title');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const contentTitle = document.querySelector('.content-header h1');
+        const contentBody = document.querySelector('.content-body');
+        const progressBar = document.getElementById('progress');
+
+        // Current topic tracker
+        let currentTopicId = 'python-intro';
+        const topicIds = Object.keys(topics);
+        let currentTopicIndex = topicIds.indexOf(currentTopicId);
+
+        // Initialize the page
+        updateContent();
+        updateNavigation();
+
+        // Add event listeners to topics
+        topicElements.forEach(topic => {
+            topic.addEventListener('click', () => {
+                const topicId = topic.getAttribute('data-id');
+                selectTopic(topicId);
+            });
+        });
+
+        // Add event listeners to module titles
+        moduleTitles.forEach(title => {
+            title.addEventListener('click', () => {
+                const topicsList = title.nextElementSibling;
+                const icon = title.querySelector('i');
+                
+                topicsList.classList.toggle('show');
+                icon.classList.toggle('fa-chevron-down');
+                icon.classList.toggle('fa-chevron-up');
+            });
+        });
+
+        // Navigation buttons
+        prevBtn.addEventListener('click', () => {
+            if (currentTopicIndex > 0) {
+                currentTopicIndex--;
+                selectTopic(topicIds[currentTopicIndex]);
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (currentTopicIndex < topicIds.length - 1) {
+                currentTopicIndex++;
+                selectTopic(topicIds[currentTopicIndex]);
+            }
+        });
+
+        // Function to select a topic
+        function selectTopic(topicId) {
+            // Update active topic in sidebar
+            topicElements.forEach(topic => {
+                if (topic.getAttribute('data-id') === topicId) {
+                    topic.classList.add('active');
+                } else {
+                    topic.classList.remove('active');
+                }
+            });
+
+            currentTopicId = topicId;
+            currentTopicIndex = topicIds.indexOf(topicId);
+            
+            updateContent();
+            updateNavigation();
+        }
+
+        // Update content based on current topic
+        function updateContent() {
+            const topic = topics[currentTopicId];
+            if (topic) {
+                contentTitle.textContent = topic.title;
+                contentBody.innerHTML = topic.content;
+                
+                // Update progress bar
+                const progress = ((currentTopicIndex + 1) / topicIds.length) * 100;
+                progressBar.style.width = `${progress}%`;
+            }
+        }
+
+        // Update navigation buttons state
+        function updateNavigation() {
+            prevBtn.disabled = currentTopicIndex === 0;
+            nextBtn.disabled = currentTopicIndex === topicIds.length - 1;
+        }
+    </script>
+</body>
+</html>

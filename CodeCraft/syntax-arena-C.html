@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeCraft - C Syntax Arena</title>
+      <link rel="shortcut icon" href="assets/images/logo2.png">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent: #f72585;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4cc9f0;
+            --gray: #6c757d;
+            --border-radius: 10px;
+            --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            
+            /* Additional colors for Python theme */
+            --python-blue: #306998;
+            --python-yellow: #FFD43B;
+            --python-light: #E2E8F0;
+            --python-dark: #1E3A8A;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--python-light) 0%, #ffffff 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: hsl(228, 12%, 17%);
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: var(--box-shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .logo i {
+            color: var(--python-yellow);
+        }
+
+        .container {
+            display: flex;
+            flex: 1;
+        }
+
+        .sidebar {
+            width: 280px;
+         background-image: url("assets/images/footer-bg.jpg");
+            padding: 1.5rem;
+            box-shadow: var(--box-shadow);
+            overflow-y: auto;
+            color: white;
+        }
+
+        .sidebar h2 {
+            color: var(--python-yellow);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--python-yellow);
+        }
+
+        .module {
+            margin-bottom: 1.5rem;
+        }
+
+        .module-title {
+            font-weight: 600;
+            color: white;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 6px;
+            transition: background-color 0.3s;
+        }
+
+        .module-title:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .module-title i {
+            transition: transform 0.3s ease;
+        }
+
+        .topics {
+            list-style: none;
+            padding-left: 1rem;
+            display: none;
+        }
+
+        .topics.show {
+            display: block;
+        }
+
+        .topic {
+            padding: 0.6rem 0.8rem;
+            margin-bottom: 0.4rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--python-light);
+        }
+
+        .topic:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .topic.active {
+            background-color: var(--python-yellow);
+            color: var(--python-dark);
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+
+        .content-header {
+            margin-bottom: 2rem;
+        }
+
+        .content-header h1 {
+            color: var(--python-blue);
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-container {
+            background-color: #e9ecef;
+            border-radius: 10px;
+            height: 10px;
+            margin: 1rem 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--python-blue), var(--python-yellow));
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .content-body {
+            background: white;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 2rem;
+            min-height: 400px;
+        }
+
+        .content-body h2 {
+            color: var(--python-blue);
+            margin-bottom: 1.2rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .content-body h3 {
+            color: var(--python-dark);
+            margin: 1.5rem 0 0.8rem 0;
+        }
+
+        .content-body p {
+            margin-bottom: 1.2rem;
+        }
+
+        .content-body ul, .content-body ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .content-body li {
+            margin-bottom: 0.5rem;
+        }
+
+        .content-body code {
+            background-color: #f8f9fa;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+            color: var(--python-dark);
+        }
+
+        .content-body pre {
+            background-color: #2b2b2b;
+            color: #f8f8f2;
+            padding: 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            font-family: 'Courier New', Courier, monospace;
+            line-height: 1.5;
+        }
+
+        .content-body pre code {
+            background-color: transparent;
+            color: inherit;
+            padding: 0;
+        }
+
+        .content-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-prev {
+            background-color: white;
+            color: var(--python-blue);
+            border: 2px solid var(--python-blue);
+        }
+
+        .btn-prev:hover:not(:disabled) {
+            background-color: #e9ecef;
+        }
+
+        .btn-next {
+            background-color: var(--python-blue);
+            color: white;
+        }
+
+        .btn-next:hover:not(:disabled) {
+            background-color: var(--python-dark);
+        }
+
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--python-dark);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                order: 2;
+            }
+            
+            .main-content {
+                order: 1;
+            }
+            
+            .content-footer {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        .code-comment {
+            color: #6A9955;
+        }
+
+        .code-keyword {
+            color: #C586C0;
+        }
+
+        .code-string {
+            color: #CE9178;
+        }
+
+        .code-function {
+            color: #DCDCAA;
+        }
+
+        .code-parameter {
+            color: #9CDCFE;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="assets/images/logo2.png" alt="logo" height="100px;">
+            <span>C Syntax Arena</span>
+        </div>
+        <div class="user-actions">
+            <img src="assets/images/C.png" alt="python" style="height: 100px;">
+        </div>
+    </header>
+
+    <div class="container">
+        <aside class="sidebar">
+            <h2>C Programming Topics</h2>
+            
+           <div class="module">
+    <div class="module-title">
+        <i class="fas fa-chevron-down"></i>
+        <span>C Programming</span>
+    </div>
+ <ul class="topics">
+    <li class="topic" data-id="c-intro">Introduction to C</li>
+    <li class="topic" data-id="c-syntax">C Syntax & Structure</li>
+    <li class="topic" data-id="c-variables">Variables & Data Types</li>
+    <li class="topic" data-id="c-operators">Operators in C</li>
+    <li class="topic" data-id="c-control">Control Flow</li>
+    <li class="topic" data-id="c-loops">Loops</li>
+    <li class="topic" data-id="c-arrays">Arrays</li>
+    <li class="topic" data-id="c-functions">Functions</li>
+    <li class="topic" data-id="c-pointers">Pointers</li>
+    <li class="topic" data-id="c-structures">Structures</li>
+    <li class="topic" data-id="c-strings">Strings</li>
+    <li class="topic" data-id="c-files">File Handling</li>
+</ul>
+</div>
+        </aside>
+
+        <main class="main-content">
+            <div class="content-header">
+                <h1>Introduction to Python</h1>
+                <p>Learn the fundamentals of Python programming</p>
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress" style="width: 5%;"></div>
+                </div>
+            </div>
+
+            <div class="content-body">
+                <h2>What is Python?</h2>
+                <p>Python is a high-level, interpreted programming language known for its clear syntax and readability. Created by Guido van Rossum and first released in 1991, Python's design philosophy emphasizes code readability with its notable use of significant whitespace.</p>
+                
+                <h2>Why Learn Python?</h2>
+                <ul>
+                    <li>Easy to learn and read - great for beginners</li>
+                    <li>Versatile - used in web development, data science, AI, and more</li>
+                    <li>Large standard library and active community</li>
+                    <li>Cross-platform compatibility</li>
+                    <li>High demand in the job market</li>
+                </ul>
+                
+                <h2>Your First Python Program</h2>
+                <p>Here's a simple "Hello, World!" program in Python:</p>
+                <pre><code><span class="code-keyword">print</span>(<span class="code-string">"Hello, World!"</span>)</code></pre>
+                
+                <p>Compare this to other languages, and you'll see why Python is known for its simplicity and readability.</p>
+            </div>
+
+            <div class="content-footer">
+                <button class="btn btn-prev" id="prevBtn" disabled>
+                    <i class="fas fa-arrow-left"></i> Previous
+                </button>
+                <button class="btn btn-next" id="nextBtn">
+                    Next <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <footer style="background-color: #2b2b2b;">
+        <p> Copyright &copy; 2025 <a href="index.html" style="text-decoration: none; color: yellow;">CodeCraft</a>. all rights reserved</p>
+    </footer>
+
+    <script>
+        // Topic data for all Python concepts
+        const topics = {
+'c-intro': {
+    title: 'Introduction to C',
+    content: `<h2>What is C?</h2>
+    <p>C is a general-purpose, procedural programming language created by Dennis Ritchie in 1972 at Bell Labs. 
+    It is considered the foundation of modern programming because many languages (C++, Java, Python, etc.) are influenced by it.</p>
+    <p><b>Key Features:</b></p>
+    <ul>
+        <li>Simple and efficient</li>
+        <li>Portable (runs on different systems)</li>
+        <li>Used in operating systems, embedded systems, and compilers</li>
+    </ul>
+    <p><b>Note:</b> Learning C helps you understand how computers work at a low level (memory, pointers, etc.).</p>`
+},
+
+'c-syntax': {
+    title: 'C Syntax & Structure',
+    content: `<h2>Basic Program Structure</h2>
+    <pre><code>#include &lt;stdio.h&gt;
+
+int main() {
+    printf("Hello, World!\\n");
+    return 0;
+}</code></pre>
+    <p><b>Explanation:</b></p>
+    <ul>
+        <li><code>#include &lt;stdio.h&gt;</code> → imports standard input-output functions like <code>printf</code>.</li>
+        <li><code>int main()</code> → every C program starts here.</li>
+        <li><code>return 0;</code> → indicates successful program execution.</li>
+    </ul>
+    <p><b>Note:</b> C is case-sensitive and every statement must end with a semicolon (;).</p>`
+},
+
+'c-variables': {
+    title: 'Variables & Data Types',
+    content: `<h2>Variables</h2>
+    <p>Variables are named memory locations used to store data. You must declare the type before using it.</p>
+    <pre><code>int age = 20;
+float salary = 45000.50;
+char grade = 'A';</code></pre>
+    <p><b>Common Data Types:</b></p>
+    <ul>
+        <li><code>int</code> → whole numbers (e.g., 10, -5)</li>
+        <li><code>float</code> → decimal numbers (e.g., 3.14)</li>
+        <li><code>double</code> → higher precision decimal numbers</li>
+        <li><code>char</code> → single characters (e.g., 'A')</li>
+    </ul>
+    <p><b>Note:</b> C is statically typed; the type cannot change after declaration.</p>`
+},
+
+'c-operators': {
+    title: 'Operators in C',
+    content: `<h2>Types of Operators</h2>
+    <p>Operators are symbols used to perform operations on variables and values.</p>
+    <h3>1. Arithmetic Operators</h3>
+    <pre><code>+, -, *, /, %</code></pre>
+    <p>Example: <code>10 % 3 = 1</code> (remainder).</p>
+
+    <h3>2. Relational Operators</h3>
+    <pre><code>&gt;, &lt;, &gt;=, &lt;=, ==, !=</code></pre>
+    <p>Used to compare values. Example: <code>5 &gt; 3</code> is true.</p>
+
+    <h3>3. Logical Operators</h3>
+    <pre><code>&& (AND), || (OR), ! (NOT)</code></pre>
+    <p>Combine conditions. Example: <code>(5 &gt; 3 &amp;&amp; 2 &lt; 4)</code> is true.</p>
+
+    <h3>4. Assignment Operators</h3>
+    <pre><code>=, +=, -=, *=, /=, %=</code></pre>
+    <p>Example: <code>int x = 5; x += 3; // x = 8</code>.</p>
+
+    <h3>5. Increment/Decrement</h3>
+    <pre><code>++, --</code></pre>
+    <p>Increase or decrease by 1. Example: <code>x++</code>.</p>
+
+    <h3>6. Bitwise Operators</h3>
+    <pre><code>&amp; (AND), | (OR), ^ (XOR), ~ (NOT), &lt;&lt; (left shift), &gt;&gt; (right shift)</code></pre>
+    <p>Work at the binary level. Example: <code>5 &amp; 3 = 1</code>.</p>
+
+    <h3>7. Ternary Operator</h3>
+    <pre><code>condition ? value_if_true : value_if_false</code></pre>
+    <p>Example: <code>(5 &gt; 3) ? 10 : 20</code> → 10.</p>
+
+    <p><b>Note:</b> Operators are the building blocks of expressions in C.</p>`
+},
+
+'c-control': {
+    title: 'Control Flow',
+    content: `<h2>If-Else Example</h2>
+    <pre><code>#include &lt;stdio.h&gt;
+
+int main() {
+    int num = 10;
+    if(num &gt; 5) {
+        printf("Greater than 5\\n");
+    } else {
+        printf("5 or less\\n");
+    }
+    return 0;
+}</code></pre>
+    <p><b>Other Control Statements:</b> <code>if-else</code>, <code>nested if</code>, <code>switch-case</code>.</p>
+    <p><b>Note:</b> Control flow decides the direction of execution in a program.</p>`
+},
+
+'c-loops': {
+    title: 'Loops in C',
+    content: `<h2>For Loop Example</h2>
+    <pre><code>for(int i = 0; i &lt; 5; i++) {
+    printf("%d\\n", i);
+}</code></pre>
+
+    <h3>While Loop</h3>
+    <pre><code>int i = 0;
+while(i &lt; 5) {
+    printf("%d\\n", i);
+    i++;
+}</code></pre>
+
+    <h3>Do-While Loop</h3>
+    <pre><code>int i = 0;
+do {
+    printf("%d\\n", i);
+    i++;
+} while(i &lt; 5);</code></pre>
+    <p><b>Note:</b> Use <code>break</code> to exit a loop early and <code>continue</code> to skip an iteration.</p>`
+},
+
+'c-arrays': {
+    title: 'Arrays in C',
+    content: `<h2>Array Example</h2>
+    <pre><code>int numbers[5] = {1, 2, 3, 4, 5};
+printf("%d", numbers[0]); // 1</code></pre>
+    <p>Arrays store multiple values of the same type in continuous memory locations.</p>
+    <p><b>Note:</b> Array indices start from 0.</p>`
+},
+
+'c-functions': {
+    title: 'Functions in C',
+    content: `<h2>Defining a Function</h2>
+    <pre><code>int add(int a, int b) {
+    return a + b;
+}
+
+int main() {
+    printf("%d", add(3, 4));
+}</code></pre>
+    <p>Functions are reusable blocks of code. They can be <b>user-defined</b> or <b>library functions</b> (like <code>printf</code>).</p>`
+},
+
+'c-pointers': {
+    title: 'Pointers in C',
+    content: `<h2>Pointer Example</h2>
+    <pre><code>int x = 10;
+int *ptr = &x;
+printf("Value: %d", *ptr);</code></pre>
+    <p>Pointers store the memory address of variables.</p>
+    <p><b>Note:</b> They are powerful but must be used carefully to avoid errors.</p>`
+},
+
+'c-structures': {
+    title: 'Structures in C',
+    content: `<h2>Structure Example</h2>
+    <pre><code>struct Car {
+    char brand[20];
+    int year;
+};
+
+struct Car myCar = {"Toyota", 2020};
+printf("%s - %d", myCar.brand, myCar.year);</code></pre>
+    <p>Structures allow grouping of different data types under one name.</p>`
+},
+
+'c-strings': {
+    title: 'Strings in C',
+    content: `<h2>String Example</h2>
+    <pre><code>char name[] = "Alice";
+printf("Hello, %s", name);</code></pre>
+    <p>Strings are arrays of characters ending with <code>\\0</code> (null character).</p>
+    <p><b>Common Functions:</b> <code>strlen</code>, <code>strcpy</code>, <code>strcat</code>, <code>strcmp</code>.</p>`
+},
+
+'c-files': {
+    title: 'File Handling in C',
+    content: `<h2>File Example</h2>
+    <pre><code>FILE *f = fopen("data.txt", "w");
+fprintf(f, "Hello File!");
+fclose(f);</code></pre>
+    <p>C provides functions like <code>fopen</code>, <code>fclose</code>, <code>fprintf</code>, <code>fscanf</code> for working with files.</p>
+    <p><b>Note:</b> Always close a file after use to avoid memory leaks.</p>`
+}
+}
+            // Additional topics would continue here in a real implementation
+
+        // DOM elements
+        const topicElements = document.querySelectorAll('.topic');
+        const moduleTitles = document.querySelectorAll('.module-title');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const contentTitle = document.querySelector('.content-header h1');
+        const contentBody = document.querySelector('.content-body');
+        const progressBar = document.getElementById('progress');
+
+        // Current topic tracker
+        let currentTopicId = 'python-intro';
+        const topicIds = Object.keys(topics);
+        let currentTopicIndex = topicIds.indexOf(currentTopicId);
+
+        // Initialize the page
+        updateContent();
+        updateNavigation();
+
+        // Add event listeners to topics
+        topicElements.forEach(topic => {
+            topic.addEventListener('click', () => {
+                const topicId = topic.getAttribute('data-id');
+                selectTopic(topicId);
+            });
+        });
+
+        // Add event listeners to module titles
+        moduleTitles.forEach(title => {
+            title.addEventListener('click', () => {
+                const topicsList = title.nextElementSibling;
+                const icon = title.querySelector('i');
+                
+                topicsList.classList.toggle('show');
+                icon.classList.toggle('fa-chevron-down');
+                icon.classList.toggle('fa-chevron-up');
+            });
+        });
+
+        // Navigation buttons
+        prevBtn.addEventListener('click', () => {
+            if (currentTopicIndex > 0) {
+                currentTopicIndex--;
+                selectTopic(topicIds[currentTopicIndex]);
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (currentTopicIndex < topicIds.length - 1) {
+                currentTopicIndex++;
+                selectTopic(topicIds[currentTopicIndex]);
+            }
+        });
+
+        // Function to select a topic
+        function selectTopic(topicId) {
+            // Update active topic in sidebar
+            topicElements.forEach(topic => {
+                if (topic.getAttribute('data-id') === topicId) {
+                    topic.classList.add('active');
+                } else {
+                    topic.classList.remove('active');
+                }
+            });
+
+            currentTopicId = topicId;
+            currentTopicIndex = topicIds.indexOf(topicId);
+            
+            updateContent();
+            updateNavigation();
+        }
+
+        // Update content based on current topic
+        function updateContent() {
+            const topic = topics[currentTopicId];
+            if (topic) {
+                contentTitle.textContent = topic.title;
+                contentBody.innerHTML = topic.content;
+                
+                // Update progress bar
+                const progress = ((currentTopicIndex + 1) / topicIds.length) * 100;
+                progressBar.style.width = `${progress}%`;
+            }
+        }
+
+        // Update navigation buttons state
+        function updateNavigation() {
+            prevBtn.disabled = currentTopicIndex === 0;
+            nextBtn.disabled = currentTopicIndex === topicIds.length - 1;
+        }
+    </script>
+</body>
+</html>
